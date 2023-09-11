@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../models/data_layer.dart';
+import '../plan_provider.dart';
 
 class PlanScreen extends StatefulWidget {
   const PlanScreen({super.key});
@@ -10,8 +10,24 @@ class PlanScreen extends StatefulWidget {
 }
 
 class _PlanScreenState extends State<PlanScreen> {
-  final plan = Plan();
-  late ScrollController scrollController;
+  ScrollController? scrollController;
+
+  //Remove Focus from TextField
+  @override
+  void initState() {
+    super.initState();
+    scrollController = ScrollController()
+      ..addListener(() {
+        FocusScope.of(context).requestFocus(FocusNode());
+      });
+  }
+
+  @override
+  void dispose() {
+    scrollController!.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +38,7 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Widget buildAddTaskButton() {
+    final plan = PlanProvider.of(context);
     return FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -32,8 +49,11 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Widget buildList() {
+    final plan = PlanProvider.of(context);
+
     return ListView.builder(
-      itemCount: plan.tasks.length,
+      controller: scrollController,
+      itemCount: plan?.tasks.length,
       itemBuilder: (context, index) => buildTaskTile(plan.tasks[index]),
     );
   }
