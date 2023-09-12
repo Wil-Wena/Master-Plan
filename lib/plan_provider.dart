@@ -3,22 +3,14 @@ import './models/data_layer.dart';
 
 class PlanProvider extends InheritedWidget {
   final _plan = Plan();
-  PlanProvider({super.key, required this.child}) : super(child: child);
+  PlanProvider({Key? key, Widget? child})
+      : super(key: key, child: child as Widget);
 
   @override
-  final Widget child;
+  bool updateShouldNotify(InheritedWidget oldWidget) => false;
 
-  static PlanProvider? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<PlanProvider>();
+  static Plan of(BuildContext context) {
+    final provider = context.dependOnInheritedWidgetOfExactType<PlanProvider>();
+    return provider!._plan;
   }
-
-  @override
-  bool updateShouldNotify(PlanProvider oldWidget) {
-    return true;
-  }
-}
-
-Plan of(BuildContext context) {
-  final provider = context.dependOnInheritedWidgetOfExactType<PlanProvider>();
-  return provider!._plan;
 }

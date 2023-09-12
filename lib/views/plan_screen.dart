@@ -30,15 +30,23 @@ class _PlanScreenState extends State<PlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final plan = PlanProvider.of(context);
+
     return Scaffold(
       appBar: AppBar(centerTitle: true, title: const Text('Master Plan')),
-      body: buildList(),
+      body: Column(
+        children: [
+          Expanded(child: buildList()),
+          SafeArea(child: Text(plan.completenessMessage))
+        ],
+      ),
       floatingActionButton: buildAddTaskButton(),
     );
   }
 
   Widget buildAddTaskButton() {
     final plan = PlanProvider.of(context);
+
     return FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -53,7 +61,7 @@ class _PlanScreenState extends State<PlanScreen> {
 
     return ListView.builder(
       controller: scrollController,
-      itemCount: plan?.tasks.length,
+      itemCount: plan.tasks.length,
       itemBuilder: (context, index) => buildTaskTile(plan.tasks[index]),
     );
   }
@@ -68,11 +76,13 @@ class _PlanScreenState extends State<PlanScreen> {
           });
         },
       ),
-      title: TextField(onChanged: (text) {
-        setState(() {
-          task.description = text;
-        });
-      }),
+      title: TextFormField(
+          initialValue: task.description,
+          onFieldSubmitted: (text) {
+            setState(() {
+              task.description = text;
+            });
+          }),
     );
   }
 }
